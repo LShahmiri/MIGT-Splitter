@@ -49,11 +49,11 @@ class MIGTSplitter:
                 if f.lower().endswith((".jpg", ".png", ".jpeg"))
             ])
 
-            ref_img = load_image(images[0], self.img_size)
+            ref_img = load_image(images[0])
 
             mi_list = []
             for p in tqdm(images):
-                img = load_image(p, self.img_size)
+                img = load_image(p)
                 mi = compute_mi(ref_img, img, self.mode)
                 mi_list.append((p, mi))
 
