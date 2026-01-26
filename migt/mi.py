@@ -8,7 +8,6 @@ def load_image(path):
     img = cv2.imread(path)
     if img is None:
         raise ValueError(f"Cannot load image: {path}")
-    img = cv2.resize(img)
     return img
 
 
