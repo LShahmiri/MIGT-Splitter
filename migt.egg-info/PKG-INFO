@@ -1,6 +1,6 @@
 Metadata-Version: 2.4
 Name: migt
-Version: 0.1.1
+Version: 0.1.2
 Summary: Mutual Information Guided Training (MIGT) dataset partitioning
 Author-email: Lida Shahmiri <lida_shahmiri@yahoo.co.uk>
 License: MIT
