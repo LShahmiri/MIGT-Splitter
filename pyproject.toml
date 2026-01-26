@@ -32,5 +32,4 @@ dependencies = [
 ]
 
 [project.urls]
-Homepage = ""
-Repository = ""
+Repository = "https://github.com/LShahmiri/MIGT-Splitter"
