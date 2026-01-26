@@ -1,0 +1,36 @@
+[build-system]
+requires = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "migt"
+version = "0.1.0"
+description = "Mutual Information Guided Training (MIGT) for dataset partitioning"
+readme = "README.md"
+requires-python = ">=3.9"
+license = { text = "MIT" }
+
+authors = [
+    { name = "Lida Shahmiri" }
+]
+
+keywords = [
+    "mutual-information",
+    "dataset-splitting",
+    "machine-learning",
+    "computer-vision",
+    "data-centric-ai"
+]
+
+dependencies = [
+    "numpy",
+    "opencv-python",
+    "scikit-image",
+    "scikit-learn",
+    "pandas",
+    "tqdm"
+]
+
+[project.urls]
+Homepage = ""
+Repository = ""
