@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="https://raw.githubusercontent.com/USERNAME/migt/main/assets/logo.png" width="280">
+  <img src="https://raw.githubusercontent.com/LShahmiri/MIGT-Splitter/edit/main/assets/logo.png" width="280">
 </p>
 
 # MIGT — Mutual Information Guided Training
