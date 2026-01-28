@@ -14,12 +14,28 @@ authors = [
   {name = "Lida Shahmiri", email = "lida_shahmiri@yahoo.co.uk"}
 ]
 
+keywords = ["data-science", "machine-learning", "data-analysis", "feature-selection", "data-preprocessing"]
 dependencies = [
-  "numpy",
-  "opencv-python",
-  "scikit-learn",
-  "tqdm",
-  "scikit-image"
+"colorama==0.4.6",
+"ImageIO==2.37.2",
+"joblib==1.5.3",
+"lazy_loader==0.4v,
+"networkx==3.6.1",
+"numpy==2.4.1v",
+"opencv-python==4.13.0.90",
+"packaging==26.0",
+"pandas==3.0.0",
+"pillow==12.1.0",
+"python-dateutil==2.9.0.post0",
+"scikit-image==0.26.0",
+"scikit-learn==1.8.0",
+"scipy==1.17.0",
+"six==1.17.0",
+"threadpoolctl==3.6.0",
+"tifffile==2026.1.14",
+"tqdm==4.67.1",
+"tzdata==2025.3",
+
 ]
 
 classifiers = [
@@ -27,7 +43,8 @@ classifiers = [
   "License :: OSI Approved :: MIT License",
   "Operating System :: OS Independent",
   "Intended Audience :: Science/Research",
-  "Topic :: Scientific/Engineering :: Artificial Intelligence"
+  "Topic :: Scientific/Engineering :: Artificial Intelligence"و
+  "Topic :: Software Development :: Libraries :: Python Modules",
 ]
 
 [project.urls]
