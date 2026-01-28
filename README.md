@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="https://raw.githubusercontent.com/USERNAME/migt/main/assets/logo.png" width="280">
+</p>
+
 # MIGT — Mutual Information Guided Training
 
 MIGT is a model-agnostic dataset partitioning method based on Mutual Information (MI).
@@ -27,6 +31,7 @@ splitter.run(output_root="migt_output")
 ```
 ### Dataset Structure 
 
+```text
 dataset/
  ├── class1/
  │    ├── img1.jpg
@@ -34,6 +39,7 @@ dataset/
  ├── class2/
  │    ├── img1.jpg
  │    ├── img2.jpg
+```
 
 ### Reference
 
