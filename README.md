@@ -4,9 +4,7 @@
 </p>
 <h1 align="center">MIGT:  Mutual Information Guided Training</h1>
 
-<p align="center">
-  <b>Model-agnostic dataset partitioning using Mutual Information</b>
-</p>
+# MIGT — Mutual Information Guided Training
 
 MIGT is a model-agnostic dataset partitioning method based on Mutual Information (MI).
 It is designed to reduce dataset bias by guiding train/test/validation splits
