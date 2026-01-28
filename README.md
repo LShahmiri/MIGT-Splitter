@@ -23,7 +23,7 @@ using information-theoretic similarity rather than random sampling.
 
 ## Installation
 
-```bash
+```python
 
 pip install migt
 from migt import MIGTSplitter
@@ -55,7 +55,6 @@ splitter = MIGTSplitter(
 
 splitter.run(output_root="migt_output")
 
-
 ```
 #### Parameters
 
@@ -71,6 +70,20 @@ splitter.run(output_root="migt_output")
 - `val` (float): Proportion of samples assigned to the validation set.
 - `seed` (int): Random seed for reproducibility.
 
+#### Dependencies 
+
+```bash
+
+    "numpy>=1.23",
+    "scipy>=1.8",
+    "scikit-learn>=1.2",
+    "scikit-image>=0.19",
+    "opencv-python>=4.5",
+    "pillow>=9.0",
+    "tqdm>=4.64",
+]
+
+```
 ### Dataset Structure 
 
 ```text
@@ -82,7 +95,6 @@ dataset/
  │    ├── img1.jpg
  │    ├── img2.jpg
 ```
-
 ### Reference
 
 This work is based on the MIGT approach described in:  
