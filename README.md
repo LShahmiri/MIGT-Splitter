@@ -3,7 +3,7 @@
 
 
 </p>
-<h1 align="center">MIGT — Mutual Information Guided Training</h1>
+<h1 align="center">MIGT: Mutual Information Guided Training</h1>
 
 <p align="center">
   <b>Model-agnostic dataset partitioning using Mutual Information</b>
