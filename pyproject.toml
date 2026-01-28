@@ -47,8 +47,14 @@ dependencies = [
   "tqdm>=4.64"
 ]
 
+
+
 [project.urls]
 Homepage = "https://github.com/LShahmiri/MIGT-Splitter"
 Repository = "https://github.com/LShahmiri/MIGT-Splitter"
 Issues = "https://github.com/LShahmiri/MIGT-Splitter/issues"
 Paper = "https://ieeexplore.ieee.org/abstract/document/10053008"
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["migt"]
