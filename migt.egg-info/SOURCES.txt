@@ -1,0 +1,11 @@
+README.md
+pyproject.toml
+migt/__init__.py
+migt/mi.py
+migt/splitter.py
+migt/utils.py
+migt.egg-info/PKG-INFO
+migt.egg-info/SOURCES.txt
+migt.egg-info/dependency_links.txt
+migt.egg-info/requires.txt
+migt.egg-info/top_level.txt
