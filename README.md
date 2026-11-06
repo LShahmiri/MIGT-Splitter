@@ -73,8 +73,10 @@ splitter.run(output_root="migt_output")
 migt_output/
  ├── train/
  ├── test/
- └── val/        # created only if val is enabled
+ ├── val/                 # created only if val is enabled
+ └── migt_manifest.csv    # every image: class, split, role, MI, bin
 ```
+`splitter.plan()` computes the same partition without copying files.
 ## Advanced Usage
 ```python
 from migt import MIGTSplitter
@@ -83,7 +85,7 @@ splitter = MIGTSplitter(
     dataset_root="dataset",
     mode="auto",
     bins=4,
-    min_bin=13,
+    min_bin=10,
     train=0.6,
     test=0.3,
     val=0.1,
@@ -107,10 +109,17 @@ splitter.run("migt_output")
 | strict_shape     | bool          | Enforce identical image sizes                        |
 | resize_to        | tuple or None | Resize images for MI computation                     |
 | seed             | int           | Random seed                                          |
+| verbose          | bool          | Print progress                                       |
+| low_sample_strategy | str        | Classes with <= min_bin images: random (default) / mi_quantile |
+| rounding         | str           | class (default): split sizes rounded per class, no empty split; per_bin: every bin rounded separately (<= 1.1.1) |
+| unscored         | str           | Images without MI score: include (default, split at random) / skip |
 ```
+Defaults: `min_bin=10` (as in the paper), `train=0.8`, `test=0.2`, `val=None`,
+`low_sample_strategy="random"`.
 ## Mutual Information Modes
 
-- auto (default): Automatically selects grayscale or color MI
+- auto (default): grayscale MI if the reference image is grayscale, otherwise colour MI
+  (a black-and-white photo in a colour class is replicated to three channels)
 
 - grayscale: Histogram-based MI on grayscale images
 
@@ -126,7 +135,9 @@ resize_to=None
 ```
 - All images must have identical dimensions
 
-- Mismatched images are skipped
+- Mismatched images get no MI score: they are split at random as an extra
+  stratum of their class and reported with a warning (`unscored="include"`),
+  or left out with a warning (`unscored="skip"`)
 
 - No interpolation applied
 
@@ -162,15 +173,15 @@ For each class:
  -bin merging is performed
 
 ## Fallback Rules (Deterministic)
-### Case A — Small Classes (Initial size < min_bin)
+### Case A — Small Classes (size <= min_bin)
 
 - Histogram binning is skipped
 
 - User-selected strategy is applied:
 
- - random
+ - random (default, as in the paper): all images split at random by the ratios
 
- - mi_quantile (2-quantile split)
+ - mi_quantile: the reference goes to train and the two MI halves are used as strata
 
 ### Case B — Large Classes, Histogram Failure
 
@@ -186,7 +197,7 @@ For each class:
 ```text
 | Situation                               | Strategy Applied                    |
 |-----------------------------------------|-------------------------------------|
-| Class size < min_bin                    | User choice (random / mi_quantile)  |
+| Class size <= min_bin                   | random (default) / mi_quantile      |
 | Histogram binning succeeds              | Histogram-based split               |
 | Histogram fails at 2 bins               | Forced MI-based 3-quantile          |
 | Random after histogram failure          | ❌ Never                            |
@@ -195,27 +206,33 @@ For each class:
 
 - First image of each class is the reference
 
-- Reference image always goes to training set
+- Reference image always goes to training set (MI-guided classes), and only there
 
 ## Train/Test Ratio Note
 
-MI is computed on N − 1 images (excluding reference).
-The reference image is added afterward, which may slightly
-shift counts (e.g., 37 instead of 36).
-
-This behavior is expected and deterministic.
+The train/test/val sizes are rounded once per class (largest remainder, at
+least one image per split when the class has at least as many images as
+splits), including the reference image, and then spread over the MI bins in
+proportion to their sizes. Example with 70/20/10: a 15-image class split into
+MI parts of 4, 5 and 5 images gets 11/3/1 images. With `rounding="per_bin"`
+(behaviour up to 1.1.1) every bin is rounded separately and the remainder goes
+to train, which gave 13/2/0 for the same class.
 
 ## Guarantees
 
 MIGT guarantees:
 
-✅ No image loss
+✅ No image loss: every image is in exactly one split; images without an MI score are reported
+
+✅ No data leakage: no image is copied into two splits; a non-empty output folder is refused
 
 ✅ No class skipping
 
+✅ No split left empty by rounding (`rounding="class"`)
+
 ✅ Distribution-aware splits
 
-✅ Deterministic behavior
+✅ Deterministic behavior (sorted classes and files, private seeded random generator)
 
 ✅ Randomness only when statistically justified
 
@@ -230,6 +247,13 @@ MIGTSplitter(
 - Only train/ and test/ folders are created
 
 - No validation directory is generated
+
+## MIGT in the GMM-MIGT package
+
+The same MIGT partition is also available in
+[gmm-migt](https://github.com/LShahmiri/GMM-MIGT) with
+`GMMMIGTSplitter(dataset_root, method="migt")`; with the same parameters both
+packages give identical splits.
 
 ## Dependencies
 
