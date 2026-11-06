@@ -40,6 +40,14 @@ MIGT is compatible with **CNNs, Vision Transformers (ViTs)**, and any vision-bas
 - ✅ Optional practical resizing mode
 - ✅ Model-agnostic and framework-independent
 - ✅ No data loss, no class skipping
+- ✅ No data leakage: no image in two splits
+- ✅ No split left empty by rounding
+- ✅ Every image reported in `migt_manifest.csv`
+
+**What's new in 1.2.0:** defaults as in the paper (`min_bin=10`, small classes
+split at random), no empty test/validation split, no image lost without a
+warning, no reference image copied into two splits, reproducible order. See
+[CHANGELOG.md](CHANGELOG.md).
 
 ---
 
@@ -96,26 +104,23 @@ splitter = MIGTSplitter(
 splitter.run("migt_output")
 ```
 ## Parameters
-```text
-| Parameter        | Type          | Description                                          |
-|------------------|---------------|------------------------------------------------------|
-| dataset_root     | str           | Path to dataset directory                            |
-| mode             | str           | MI mode: auto / grayscale / color                    |
-| bins             | int           | Initial number of histogram bins                     |
-| min_bin          | int           | Minimum samples required per bin                     |
-| train            | float         | Training split ratio                                 |
-| test             | float         | Test split ratio                                     |
-| val              | float or None | Validation split ratio (optional)                    |
-| strict_shape     | bool          | Enforce identical image sizes                        |
-| resize_to        | tuple or None | Resize images for MI computation                     |
-| seed             | int           | Random seed                                          |
-| verbose          | bool          | Print progress                                       |
-| low_sample_strategy | str        | Classes with <= min_bin images: random (default) / mi_quantile |
-| rounding         | str           | class (default): split sizes rounded per class, no empty split; per_bin: every bin rounded separately (<= 1.1.1) |
-| unscored         | str           | Images without MI score: include (default, split at random) / skip |
-```
-Defaults: `min_bin=10` (as in the paper), `train=0.8`, `test=0.2`, `val=None`,
-`low_sample_strategy="random"`.
+
+| Parameter | Type | Default | Description |
+|---|---|---|---|
+| `dataset_root` | str | – | Path to dataset directory |
+| `mode` | str | `"auto"` | MI mode: `auto` / `grayscale` / `color` |
+| `bins` | int | `4` | Initial number of histogram bins |
+| `min_bin` | int | `10` | Minimum samples required per bin (value of the paper) |
+| `train` | float | `0.8` | Training split ratio |
+| `test` | float | `0.2` | Test split ratio |
+| `val` | float or None | `None` | Validation split ratio (optional) |
+| `strict_shape` | bool | `True` | Enforce identical image sizes |
+| `resize_to` | tuple or None | `None` | Resize images for MI computation (required if `strict_shape=False`) |
+| `seed` | int | `42` | Random seed |
+| `verbose` | bool | `True` | Print progress |
+| `low_sample_strategy` | str | `"random"` | Classes with <= `min_bin` images: `random` (as in the paper) / `mi_quantile` |
+| `rounding` | str | `"class"` | `class`: split sizes rounded per class, no empty split; `per_bin`: every bin rounded separately (up to 1.1.1) |
+| `unscored` | str | `"include"` | Images without MI score: `include` (split at random, with a warning) / `skip` (left out, with a warning) |
 ## Mutual Information Modes
 
 - auto (default): grayscale MI if the reference image is grayscale, otherwise colour MI
@@ -170,7 +175,8 @@ For each class:
  - Reduce bins sequentially: 4 → 3 → 2
 
  - Recompute histogram from scratch each time
- -bin merging is performed
+
+ - No bins are merged; empty bins are dropped before the `min_bin` test
 
 ## Fallback Rules (Deterministic)
 ### Case A — Small Classes (size <= min_bin)
@@ -194,14 +200,12 @@ For each class:
  - User preference is ignored intentionally
 ## Decision Summary
 
-```text
-| Situation                               | Strategy Applied                    |
-|-----------------------------------------|-------------------------------------|
-| Class size <= min_bin                   | random (default) / mi_quantile      |
-| Histogram binning succeeds              | Histogram-based split               |
-| Histogram fails at 2 bins               | Forced MI-based 3-quantile          |
-| Random after histogram failure          | ❌ Never                            |
-```
+| Situation | Strategy Applied |
+|---|---|
+| Class size <= `min_bin` | `random` (default) / `mi_quantile` |
+| Histogram binning succeeds | Histogram-based split |
+| Histogram fails at 2 bins | Forced MI-based 3-quantile |
+| Random after histogram failure | ❌ Never |
 ## Reference Image Handling
 
 - First image of each class is the reference
@@ -248,12 +252,24 @@ MIGTSplitter(
 
 - No validation directory is generated
 
+With `val`, for example `train=0.7, test=0.2, val=0.1`, a val/ folder is
+created as well.
+
 ## MIGT in the GMM-MIGT package
 
 The same MIGT partition is also available in
 [gmm-migt](https://github.com/LShahmiri/GMM-MIGT) with
 `GMMMIGTSplitter(dataset_root, method="migt")`; with the same parameters both
 packages give identical splits.
+
+## Testing
+
+```bash
+git clone https://github.com/LShahmiri/MIGT-Splitter.git
+cd MIGT-Splitter
+pip install -e ".[test]"
+pytest
+```
 
 ## Dependencies
 
@@ -268,13 +284,12 @@ tqdm>=4.64
 ```
 ## Reference
 
-This work is based on:
+This work is based on the following paper; if you use MIGT, please cite it:
 
 L. Shahmiri, P. Wong, and L. S. Dooley,
 Accurate Medicinal Plant Identification in Natural Environments by Embedding Mutual Information in a Convolution Neural Network Model,
 IEEE IPAS 2022, https://ieeexplore.ieee.org/abstract/document/10053008
 
+## License
 
-
-
-
+MIT License. Copyright (c) 2026 Lida Shahmiri. See [LICENSE](LICENSE).
